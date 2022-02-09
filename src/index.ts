@@ -1,1 +1,1 @@
-export { default as TablePlugin } from "./TablePlugin";
+export { default as TablePlugin } from './TablePlugin';

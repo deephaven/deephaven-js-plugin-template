@@ -1,6 +1,7 @@
-import React, { Component } from "react";
-import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import type { Column, Table } from "@deephaven/jsapi-shim";
+/* eslint-disable no-alert */
+import React, { Component } from 'react';
+import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import type { Column, Table } from '@deephaven/jsapi-shim';
 
 type QuickFilterDefinition = { name: string; type: string; value: string };
 
@@ -11,7 +12,14 @@ type IrisGridContextMenuData = {
 };
 
 type TablePluginProps = {
-  onFilter: (filters: QuickFilterDefinition[]) => void;
+  /**
+   * Call to filter the table with new filters
+   */
+  filter: (filters: QuickFilterDefinition[]) => void;
+
+  /**
+   * The table object
+   */
   table: Table;
 };
 
@@ -29,8 +37,6 @@ type TablePluginState = {
  * t.setAttribute("PluginName", "@deephaven/js-plugin-template")
  */
 class TablePlugin extends Component<TablePluginProps, TablePluginState> {
-  private confirmButton: React.RefObject<HTMLButtonElement>;
-
   constructor(props) {
     super(props);
 
@@ -45,40 +51,42 @@ class TablePlugin extends Component<TablePluginProps, TablePluginState> {
     };
   }
 
+  private confirmButton: React.RefObject<HTMLButtonElement>;
+
   /**
    * Optional method to get a context menu from the plugin when clicking inside the table.
    *
    * @param data data from deephaven
    */
   getMenu(data: IrisGridContextMenuData) {
-    const { onFilter, table } = this.props;
+    const { filter, table } = this.props;
     const { value, column, model } = data;
     const { name, type } = column;
     const actions = [];
 
     actions.push({
-      title: "Display value",
+      title: 'Display value',
       group: 0,
       order: 0,
       action: () => alert(value),
     });
 
     actions.push({
-      title: "Show Dialog",
+      title: 'Show Dialog',
       group: 0,
       order: 10,
       action: this.handleOpenModal,
     });
 
     actions.push({
-      title: "Display Table",
+      title: 'Display Table',
       group: 0,
       order: 20,
       action: () => alert(table),
     });
 
     actions.push({
-      title: "Display Model",
+      title: 'Display Model',
       group: 0,
       order: 30,
       action: () => alert(model),
@@ -87,18 +95,18 @@ class TablePlugin extends Component<TablePluginProps, TablePluginState> {
     const subMenu = [];
 
     actions.push({
-      title: "Filter Sub Menu",
+      title: 'Filter Sub Menu',
       group: 0,
       order: 40,
       actions: subMenu,
     });
 
     subMenu.push({
-      title: "Filter by value",
+      title: 'Filter by value',
       group: 0,
       order: 0,
       action: () =>
-        onFilter([
+        filter([
           {
             name,
             type,
@@ -108,10 +116,10 @@ class TablePlugin extends Component<TablePluginProps, TablePluginState> {
     });
 
     subMenu.push({
-      title: "Clear Filter",
+      title: 'Clear Filter',
       group: 0,
       order: 10,
-      action: () => onFilter([]),
+      action: () => filter([]),
     });
 
     return actions;
