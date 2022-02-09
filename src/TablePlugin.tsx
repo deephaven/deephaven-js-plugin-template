@@ -1,8 +1,36 @@
-/* eslint-disable */
-import React, { Component } from 'react';
-import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import React, { Component } from "react";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import type { Column, Table } from "@deephaven/jsapi-shim";
 
-class ExamplePlugin extends Component {
+type QuickFilterDefinition = { name: string; type: string; value: string };
+
+type IrisGridContextMenuData = {
+  value: string;
+  column: Column;
+  model: unknown;
+};
+
+type TablePluginProps = {
+  onFilter: (filters: QuickFilterDefinition[]) => void;
+  table: Table;
+};
+
+type TablePluginState = {
+  isModalOpen: boolean;
+};
+
+/**
+ * An example of a TablePlugin. TablePlugins are loaded with a table when it has the `PLUGIN_NAME` attribute specified.
+ * The plugin is rendered above the table.
+ *
+ * @example
+ * from deephaven.TableTools import emptyTable
+ * t = emptyTable(5).update("X=i")
+ * t.setAttribute("PluginName", "@deephaven/js-plugin-template")
+ */
+class TablePlugin extends Component<TablePluginProps, TablePluginState> {
+  private confirmButton: React.RefObject<HTMLButtonElement>;
+
   constructor(props) {
     super(props);
 
@@ -10,7 +38,7 @@ class ExamplePlugin extends Component {
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
 
-    this.confirmButton = React.createRef();
+    this.confirmButton = React.createRef<HTMLButtonElement>();
 
     this.state = {
       isModalOpen: false,
@@ -18,39 +46,39 @@ class ExamplePlugin extends Component {
   }
 
   /**
-   * Optional method to get a menu from the plugin.
+   * Optional method to get a context menu from the plugin when clicking inside the table.
    *
-   * @param {object} data data from deephaven
+   * @param data data from deephaven
    */
-  getMenu(data) {
+  getMenu(data: IrisGridContextMenuData) {
     const { onFilter, table } = this.props;
     const { value, column, model } = data;
     const { name, type } = column;
     const actions = [];
 
     actions.push({
-      title: 'Display value',
+      title: "Display value",
       group: 0,
       order: 0,
       action: () => alert(value),
     });
 
     actions.push({
-      title: 'Show Dialog',
+      title: "Show Dialog",
       group: 0,
       order: 10,
       action: this.handleOpenModal,
     });
 
     actions.push({
-      title: 'Display Table',
+      title: "Display Table",
       group: 0,
       order: 20,
       action: () => alert(table),
     });
 
     actions.push({
-      title: 'Display Model',
+      title: "Display Model",
       group: 0,
       order: 30,
       action: () => alert(model),
@@ -59,14 +87,14 @@ class ExamplePlugin extends Component {
     const subMenu = [];
 
     actions.push({
-      title: 'Filter Sub Menu',
+      title: "Filter Sub Menu",
       group: 0,
       order: 40,
       actions: subMenu,
     });
 
     subMenu.push({
-      title: 'Filter by value',
+      title: "Filter by value",
       group: 0,
       order: 0,
       action: () =>
@@ -80,7 +108,7 @@ class ExamplePlugin extends Component {
     });
 
     subMenu.push({
-      title: 'Clear Filter',
+      title: "Clear Filter",
       group: 0,
       order: 10,
       action: () => onFilter([]),
@@ -140,4 +168,4 @@ class ExamplePlugin extends Component {
   }
 }
 
-export default ExamplePlugin;
+export default TablePlugin;
