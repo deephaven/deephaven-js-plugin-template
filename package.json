@@ -1,5 +1,5 @@
 {
-  "name": "@deephaven/js-plugin-module-template",
+  "name": "@deephaven/js-plugin-template",
   "version": "0.1.0",
   "description": "Deephaven plugin template",
   "keywords": [

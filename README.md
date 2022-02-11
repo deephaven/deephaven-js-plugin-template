@@ -40,5 +40,5 @@ Set the `PLUGIN_NAME` attribute on the Table with the name of the plugin.
 
 ```
 t = emptyTable(5).update("X=i")
-t.setAttribute("PluginName", "@deephaven/js-plugin-module-template")
+t.setAttribute("PluginName", "@deephaven/js-plugin-template")
 ```
