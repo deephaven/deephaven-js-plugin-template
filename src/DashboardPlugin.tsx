@@ -77,18 +77,10 @@ export const DashboardPlugin = ({
     [id, layout]
   );
 
-  // TODO: use IrisGridDataSelectedEventCallback type instead
-  const handleDataSelected = useCallback(
-    (panel: IrisGridPanel, data: RowDataMap) => {
-      log.info('Data selected', data);
-    },
-    []
-  );
-
+  /**
+   * Register our custom component type so the layout know hows to open it
+   */
   useEffect(() => {
-    /**
-     * Register our custom component type so the layout know hows to open it
-     */
     const cleanups = [registerComponent(CustomPanel.COMPONENT, CustomPanel)];
 
     return () => {
@@ -100,6 +92,14 @@ export const DashboardPlugin = ({
    * Listen for panel open events so we know when to open a panel
    */
   useListener(layout.eventHub, PanelEvent.OPEN, handlePanelOpen);
+
+  // TODO: use IrisGridDataSelectedEventCallback type instead
+  const handleDataSelected = useCallback(
+    (panel: IrisGridPanel, data: RowDataMap) => {
+      log.info('Data selected', data);
+    },
+    []
+  );
 
   /**
    * Listen for when data is selected in a grid panel
