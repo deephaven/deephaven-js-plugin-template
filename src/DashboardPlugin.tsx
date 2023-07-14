@@ -1,15 +1,11 @@
-import React, { DragEvent, useCallback, useEffect } from 'react';
-import shortid from 'shortid';
+import React, { useCallback } from 'react';
 import {
   DashboardPluginComponentProps,
-  LayoutUtils,
-  PanelEvent,
+  useComponent,
   useListener,
 } from '@deephaven/dashboard';
-import { VariableDefinition } from '@deephaven/jsapi-types';
 import Log from '@deephaven/log';
 import CustomPanel from './CustomPanel';
-import { ReactComponentConfig } from '@deephaven/golden-layout';
 import { IrisGridEvent } from '@deephaven/dashboard-core-plugins';
 import { IrisGridPanel } from '@deephaven/dashboard-core-plugins/dist/panels/IrisGridPanel';
 import { RowDataMap } from '@deephaven/jsapi-utils';
@@ -32,68 +28,18 @@ export const VARIABLE_TYPE = 'example.custom.MyVariableType';
  * @param props The props passed in from the Dashboard
  * @returns A rendered dashboard component
  */
-export const DashboardPlugin = ({
-  id,
-  layout,
-  registerComponent,
-}: DashboardPluginComponentProps): JSX.Element => {
-  // TODO: This type should be defined in @deephaven packages
-  // PanelOpenEventDetail
-  const handlePanelOpen = useCallback(
-    ({
-      dragEvent,
-      fetch,
-      panelId = shortid.generate(),
-      widget,
-    }: {
-      dragEvent?: DragEvent;
-      fetch: () => Promise<unknown>;
-      panelId?: string;
-      widget: VariableDefinition;
-    }) => {
-      const { id: widgetId, name, type } = widget;
-      if ((type as string) !== VARIABLE_TYPE) {
-        // Only want to listen for your custom panel types
-        return;
-      }
-      log.info('Panel opened of type', type);
-      const metadata = { id: widgetId, name, type };
-      const config: ReactComponentConfig = {
-        type: 'react-component',
-        component: CustomPanel.COMPONENT,
-        props: {
-          localDashboardId: id,
-          id: panelId,
-          metadata,
-          fetch,
-        },
-        title: name,
-        id: panelId,
-      };
+export const DashboardPlugin = (
+  props: DashboardPluginComponentProps
+): JSX.Element => {
+  const { layout } = props;
 
-      const { root } = layout;
-      LayoutUtils.openComponent({ root, config, dragEvent });
-    },
-    [id, layout]
-  );
+  /** Register our custom panel to open when an object of `VARIABLE_TYPE` is created */
+  useComponent(props, CustomPanel.COMPONENT, CustomPanel, VARIABLE_TYPE);
 
   /**
-   * Register our custom component type so the layout know hows to open it
+   * Call back for use when data is selected.
+   * We declare this using `useCallback` so that it does not trigger re-renders when passed into `useListener`.
    */
-  useEffect(() => {
-    const cleanups = [registerComponent(CustomPanel.COMPONENT, CustomPanel)];
-
-    return () => {
-      cleanups.forEach(cleanup => cleanup());
-    };
-  }, [registerComponent]);
-
-  /**
-   * Listen for panel open events so we know when to open a panel
-   */
-  useListener(layout.eventHub, PanelEvent.OPEN, handlePanelOpen);
-
-  // TODO: use IrisGridDataSelectedEventCallback type instead
   const handleDataSelected = useCallback(
     (panel: IrisGridPanel, data: RowDataMap) => {
       log.info('Data selected', data);
