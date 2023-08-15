@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import {
   DashboardPluginComponentProps,
-  useComponent,
+  useDashboardPanel,
   useListener,
 } from '@deephaven/dashboard';
 import Log from '@deephaven/log';
@@ -34,7 +34,12 @@ export const DashboardPlugin = (
   const { layout } = props;
 
   /** Register our custom panel to open when an object of `VARIABLE_TYPE` is created */
-  useComponent(props, CustomPanel.COMPONENT, CustomPanel, VARIABLE_TYPE);
+  useDashboardPanel({
+    dashboardProps: props,
+    componentName: CustomPanel.COMPONENT,
+    component: CustomPanel,
+    supportedTypes: VARIABLE_TYPE,
+  });
 
   /**
    * Call back for use when data is selected.
