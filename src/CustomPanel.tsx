@@ -1,7 +1,6 @@
 import React from 'react';
 import { DashboardPanelProps } from '@deephaven/dashboard';
 import Log from '@deephaven/log';
-import './CustomPanel.scss';
 
 const log = Log.module('@deephaven/js-plugin-template.CustomPanel');
 
