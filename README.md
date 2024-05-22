@@ -1,4 +1,6 @@
-# Deephaven JavaScript Module Plugin Template
+# DEPRECATED
+
+Please use the [cookiecutter templates](https://github.com/deephaven/deephaven-plugins/tree/main/templates) instead.
 
 Use this Template to create a JavaScript Plugin. It is set up with TypeScript, React, ESLint, Prettier, sass, and image loader. Use this template as a starting point for creating new Deephaven JavaScript Module Plugins. Each JavaScript module may or may not include different plugin types, such as a `DashboardPlugin` or a `TablePlugin`.
 
